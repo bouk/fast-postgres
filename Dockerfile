@@ -135,7 +135,9 @@ RUN set -eux; \
   mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql ; \
 # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
   mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" ; \
-  su-exec postgres initdb --encoding=UNICODE --pwfile=<(echo postgres) --auth=trust
+  echo postgres >/tmp/password-postgres ; \
+  su-exec postgres initdb --encoding=UNICODE --pwfile=/tmp/password-postgres --auth=trust ; \
+  rm -f /tmp/password-postgres
 
 STOPSIGNAL SIGQUIT
 EXPOSE 5432
