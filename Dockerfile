@@ -1,6 +1,8 @@
 # vim:set ft=dockerfile:
 FROM alpine:3.13
 
+LABEL org.opencontainers.image.source=https://github.com/bouk/fast-postgres
+
 # make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
 # alpine doesn't require explicit locale-file generation
 ENV LANG en_US.utf8
@@ -128,10 +130,10 @@ RUN set -eux; \
 	; \
 	\
 	postgres --version ; \
-  # make the sample config easier to munge (and "correct by default")
+# make the sample config easier to munge (and "correct by default")
   sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/share/postgresql/postgresql.conf.sample ; \
   mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql ; \
-  # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
+# this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
   mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" ; \
   su-exec postgres initdb --encoding=UNICODE --auth=trust
 
